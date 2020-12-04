@@ -1,0 +1,381 @@
+drop database if exists BIGSCREEN;
+create database BIGSCREEN;
+use BIGSCREEN;
+
+drop table if exists MOVIES;
+drop table if exists IN_THEATRE;
+drop table if exists INDUSTRY;
+drop table if exists PRODUCTION_HOUSE;
+drop table if exists EMAIL_OF_PRODUCTION_HOUSE;
+drop table if exists BOX_OFFICE_COLLECTION;
+drop table if exists RATING_OF_MOVIE;
+drop table if exists ACTED_PRODUCED_DIRECTED;
+drop table if exists ACTOR;
+drop table if exists PRODUCER;
+drop table if exists DIRECTOR;
+drop table if exists MAJOR_PERSONALITIES;
+
+
+
+create table INDUSTRY(
+	IndustryID INT NOT NULL AUTO_INCREMENT, 
+	IndustryName VARCHAR(30) NOT NULL, 
+	PRIMARY KEY(IndustryID)
+);
+create table PRODUCTION_HOUSE(
+	ProductionHouseID INT NOT NULL AUTO_INCREMENT, 
+	ProductionHouseName VARCHAR(30) NOT NULL, 
+	Founder VARCHAR(30) , 
+	IndustryID INT , 
+	PRIMARY KEY(ProductionHouseID),
+	FOREIGN KEY (IndustryID) REFERENCES INDUSTRY(IndustryID)	
+);
+create table MOVIES(
+	MovieID INT NOT NULL AUTO_INCREMENT, 
+	Name VARCHAR(30) NOT NULL, 
+	ReleaseDate DATE, 
+	RunTime TIME,
+	Genre VARCHAR(30),
+	Budget INT,
+	IndustryID INT, 
+	ProductionHouseID INT,
+	BoxOffice INT, 
+	Rating INT, 
+	PRIMARY KEY (MovieID),
+	FOREIGN KEY (IndustryID) REFERENCES INDUSTRY(IndustryID), 
+	FOREIGN KEY (ProductionHouseID) REFERENCES PRODUCTION_HOUSE(ProductionHouseID)
+);
+
+create table IN_THEATRE(
+	InTheatreID INT NOT NULL AUTO_INCREMENT,
+	MovieID INT NOT NULL, 
+	DaysInTheatre INT, 
+	PRIMARY KEY(InTheatreID),
+	FOREIGN KEY (MovieID) REFERENCES MOVIES(MovieID)
+);
+
+
+
+create table MAJOR_PERSONALITIES(
+	PersonID INT NOT NULL AUTO_INCREMENT,
+	PersonName VARCHAR(30) NOT NULL,
+	DateOfBirth DATE,
+	Gender VARCHAR(1),
+	Profession VARCHAR(30),
+	HouseNo VARCHAR(30),
+	Street VARCHAR(30),
+	City VARCHAR(30),
+	PRIMARY KEY (PersonID)	
+);
+create table ACTOR(
+	ActorID INT REFERENCES MAJOR_PERSONALITIES,
+	AvgPayCheck INT,
+	PRIMARY KEY(ActorID),
+	FOREIGN KEY (ActorID) REFERENCES MAJOR_PERSONALITIES(PersonID)
+);
+create table PRODUCER(
+	ProducerID INT REFERENCES MAJOR_PERSONALITIES,
+	AvgBudget INT,
+	PRIMARY KEY(ProducerID),
+	FOREIGN KEY (ProducerID) REFERENCES MAJOR_PERSONALITIES(PersonID)
+);
+create table DIRECTOR(
+	DirectorID INT REFERENCES MAJOR_PERSONALITIES,
+	FavouriteGenre VARCHAR(30),
+	PRIMARY KEY(DirectorID),
+	FOREIGN KEY (DirectorID) REFERENCES MAJOR_PERSONALITIES(PersonID)
+);
+
+create table ACTED_PRODUCED_DIRECTED(
+	MovieID INT NOT NULL,
+	DirectorID INT NOT NULL,
+	ProducerID INT NOT NULL,
+	ActorID INT NOT NULL,
+	FOREIGN KEY (MovieID) REFERENCES MOVIES(MovieID),
+	FOREIGN KEY (ActorID) REFERENCES ACTOR(ActorID),
+	FOREIGN KEY (ProducerID) REFERENCES PRODUCER(ProducerID),
+	FOREIGN KEY (DirectorID) REFERENCES DIRECTOR(DirectorID),
+	PRIMARY KEY (MovieID,ActorID,ProducerID,DirectorID)
+
+);
+
+create table BOX_OFFICE_COLLECTION(
+	MovieID INT NOT NULL,
+	Country VARCHAR(30) NOT NULL,
+	Collection INT,
+	FOREIGN KEY (MovieID) REFERENCES MOVIES(MovieID),
+	PRIMARY KEY (MovieID,Country)	
+);
+create table RATING_OF_MOVIE(
+	MovieID INT NOT NULL,
+	GivenBy VARCHAR(30) NOT NULL,
+	AvgRating INT,
+	FOREIGN KEY (MovieID) REFERENCES MOVIES(MovieID),
+	PRIMARY KEY (MovieID,GivenBy)	
+);
+
+create table EMAIL_OF_PRODUCTION_HOUSE(
+	ProductionHouseID INT NOT NULL,
+	Email VARCHAR(30) NOT NULL,
+	FOREIGN KEY (ProductionHouseID) REFERENCES PRODUCTION_HOUSE(ProductionHouseID),
+	PRIMARY KEY (ProductionHouseID,Email)	
+);
+
+
+INSERT INTO INDUSTRY (IndustryName) VALUES ('Industry one');
+INSERT INTO INDUSTRY (IndustryName) VALUES ('Industry two');
+
+INSERT INTO PRODUCTION_HOUSE (ProductionHouseName,Founder,IndustryID) VALUES ('ProductionHouse one','abc',1);
+INSERT INTO PRODUCTION_HOUSE (ProductionHouseName,Founder,IndustryID) VALUES ('ProductionHouse two','def',1);
+INSERT INTO PRODUCTION_HOUSE (ProductionHouseName,Founder,IndustryID) VALUES ('ProductionHouse three','ghi',1);
+INSERT INTO PRODUCTION_HOUSE (ProductionHouseName,Founder,IndustryID) VALUES ('ProductionHouse four','kjl',2);
+INSERT INTO PRODUCTION_HOUSE (ProductionHouseName,Founder,IndustryID) VALUES ('ProductionHouse five','mno',2);
+
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie one','2018-07-29','2:05','Horror',10,1,1,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie tow','2017-01-11','1:05','Horror',10,1,1,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie three','2016-11-13','2:15','Horror',10,1,1,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie four','2015-12-21','2:25','Horror',10,1,1,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie five','2014-10-22','2:35','Horror',10,1,1,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie six','2013-09-29','2:02','Horror',10,1,2,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie seven','2018-08-05','1:55','Horror',10,1,2,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie eight','2016-04-03','1:45','Horror',10,1,2,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie nine','2013-01-02','1:35','Horror',10,2,4,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie ten','2012-02-07','1:25','Horror',10,2,4,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie eleven','2011-11-30','2:05','Horror',10,2,4,0,0);
+INSERT INTO MOVIES (Name,ReleaseDate,RunTime,Genre,Budget,IndustryID,ProductionHouseID,BoxOffice,Rating) VALUES ('Movie tweleve','2015-09-08','2:25','Horror',10,2,5,0,0);
+
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1980-09-28','M','ACTOR','person one','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1981-09-18','F','ACTOR','person two','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1980-11-21','M','ACTOR','person three','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1985-09-05','M','ACTOR','person four','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1983-07-02','F','ACTOR','person five','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1987-09-08','M','ACTOR','person six','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1980-05-13','M','ACTOR','person seven','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1982-09-19','F','ACTOR','person eight','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1988-02-13','M','ACTOR','person nine','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1980-01-31','F','ACTOR','person ten','j','k','l');
+
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1972-01-11','M','PRODUCER','person eleven','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1974-02-21','F','PRODUCER','person tweleve','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1975-05-07','M','PRODUCER','person thirteen','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1971-07-13','F','PRODUCER','person fourteen','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1979-12-19','M','PRODUCER','person fifteen','j','k','l');
+
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1979-12-19','M','DIRECTOR','person sixteen','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1989-02-12','F','DIRECTOR','person seventeen','j','k','l');
+INSERT INTO MAJOR_PERSONALITIES (DateOfBirth,Gender,Profession,PersonName,HouseNo,Street,City) VALUES ('1969-06-01','F','DIRECTOR','person eighteen','j','k','l');
+
+
+
+INSERT INTO ACTOR VALUES (1,10);
+INSERT INTO ACTOR VALUES (2,10);
+INSERT INTO ACTOR VALUES (3,10);
+INSERT INTO ACTOR VALUES (4,10);
+INSERT INTO ACTOR VALUES (5,10);
+INSERT INTO ACTOR VALUES (6,10);
+INSERT INTO ACTOR VALUES (7,10);
+INSERT INTO ACTOR VALUES (8,10);
+INSERT INTO ACTOR VALUES (9,10);
+INSERT INTO ACTOR VALUES (10,10);
+INSERT INTO PRODUCER VALUES (11,100);
+INSERT INTO PRODUCER VALUES (12,100);
+INSERT INTO PRODUCER VALUES (13,100);
+INSERT INTO PRODUCER VALUES (14,100);
+INSERT INTO PRODUCER VALUES (15,100);
+INSERT INTO DIRECTOR VALUES (16,'HORROR');
+INSERT INTO DIRECTOR VALUES (17,'HORROR');
+INSERT INTO DIRECTOR VALUES (18,'HORROR');
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,11,1);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,11,7);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,11,2);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,12,1);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,12,7);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (1,16,12,2);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (2,16,12,2);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (2,16,15,2);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (3,16,14,1);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (3,16,14,8);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (4,16,11,2);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (4,16,11,7);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (4,16,15,2);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (4,16,15,7);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (5,16,12,3);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (5,16,12,7);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (5,16,12,8);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (6,17,13,4);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (6,17,13,10);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (6,17,11,4);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (6,17,11,10);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (7,17,12,3);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (7,17,12,8);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,11,4);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,11,9);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,11,10);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,15,4);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,15,9);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (8,17,15,10);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (9,18,14,5);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (9,18,14,9);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (10,18,13,6);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (10,18,13,2);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (10,18,14,6);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (10,18,14,2);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (11,18,13,6);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (11,18,13,9);
+
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (12,18,14,5);
+INSERT INTO ACTED_PRODUCED_DIRECTED (MovieID,DirectorID,ProducerID,ActorID) VALUES (12,18,14,10);
+
+
+INSERT INTO IN_THEATRE (MovieID,DaysInTheatre) SELECT MOVIES.MovieID, DATEDIFF(  CURRENT_DATE(), (SELECT ReleaseDate FROM MOVIES WHERE MovieID=2)) FROM MOVIES WHERE MovieID=2;
+INSERT INTO IN_THEATRE (MovieID,DaysInTheatre) SELECT MOVIES.MovieID, DATEDIFF(  CURRENT_DATE(), (SELECT ReleaseDate FROM MOVIES WHERE MovieID=8)) FROM MOVIES WHERE MovieID=8;
+INSERT INTO IN_THEATRE (MovieID,DaysInTheatre) SELECT MOVIES.MovieID, DATEDIFF(  CURRENT_DATE(), (SELECT ReleaseDate FROM MOVIES WHERE MovieID=9)) FROM MOVIES WHERE MovieID=9;
+
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (1,'AAA',30);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (1,'BBB',10);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (2,'AAA',25);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (2,'BBB',12);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (2,'CCC',35);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (3,'AAA',38);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (4,'AAA',12);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (5,'AAA',23);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (6,'AAA',44);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (6,'BBB',11);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (6,'CCC',41);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (6,'DDD',11);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (7,'AAA',11);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (7,'BBB',30);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (8,'AAA',29);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (9,'AAA',28);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (9,'BBB',27);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (10,'AAA',19);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (11,'AAA',19);
+INSERT INTO BOX_OFFICE_COLLECTION (MovieID,Country,Collection) VALUES (12,'AAA',19);
+
+
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (1,'Rating one',8);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (1,'Rating two',7);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (2,'Rating one',6);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (3,'Rating one',5);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (3,'Rating two',4);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (4,'Rating one',8);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (5,'Rating one',8);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (5,'Rating two',8);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (6,'Rating one',9);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (7,'Rating one',9);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (7,'Rating two',10);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (8,'Rating one',4);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (9,'Rating one',7);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (9,'Rating two',9);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (10,'Rating one',2);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (11,'Rating one',2);
+INSERT INTO RATING_OF_MOVIE (MovieID,GivenBy,AvgRating) VALUES (12,'Rating one',2);
+
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (1,'emailone@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (1,'emailtwo@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (1,'emailthree@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (2,'emailfour@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (3,'emailfive@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (3,'emailsix@gmail.com');
+INSERT INTO EMAIL_OF_PRODUCTION_HOUSE (ProductionHouseID,Email) VALUES (4,'emailseven@gmail.com');
+
+
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=1)
+WHERE MovieID=1;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=2)
+WHERE MovieID=2;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=3)
+WHERE MovieID=3;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=4)
+WHERE MovieID=4;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=5)
+WHERE MovieID=5;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=6)
+WHERE MovieID=6;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=7)
+WHERE MovieID=7;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=8)
+WHERE MovieID=8;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=9)
+WHERE MovieID=9;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=10)
+WHERE MovieID=10;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=11)
+WHERE MovieID=11;
+UPDATE MOVIES
+SET BoxOffice=(SELECT SUM(Collection) FROM BOX_OFFICE_COLLECTION WHERE MovieID=12)
+WHERE MovieID=12;
+
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=1)
+WHERE MovieID=1;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=2)
+WHERE MovieID=2;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=3)
+WHERE MovieID=3;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=4)
+WHERE MovieID=4;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=5)
+WHERE MovieID=5;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=6)
+WHERE MovieID=6;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=7)
+WHERE MovieID=7;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=8)
+WHERE MovieID=8;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=9)
+WHERE MovieID=9;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=10)
+WHERE MovieID=10;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=11)
+WHERE MovieID=11;
+UPDATE MOVIES
+SET Rating=(SELECT AVG(AvgRating) FROM RATING_OF_MOVIE WHERE MovieID=12)
+WHERE MovieID=12;
+
+
+
+SELECT * FROM MOVIES;
+SELECT * FROM INDUSTRY;
+SELECT * FROM PRODUCTION_HOUSE;
+SELECT * FROM MAJOR_PERSONALITIES;
+SELECT * FROM ACTOR;
+SELECT * FROM PRODUCER;
+SELECT * FROM DIRECTOR;
+SELECT * FROM ACTED_PRODUCED_DIRECTED ORDER BY MovieID,DirectorID,ProducerID,ActorID;
+SELECT * FROM IN_THEATRE;
+SELECT * FROM BOX_OFFICE_COLLECTION;
+SELECT * FROM RATING_OF_MOVIE;
+SELECT * FROM EMAIL_OF_PRODUCTION_HOUSE;
