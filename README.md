@@ -43,9 +43,6 @@ pip install PyMySQL
 ```
 conda install -c anaconda pymysql
 ```
-
-## Boilerplate
-
 ### To Run
 To run the code, you will need to login with a username and password(your MYSQL username and password) which has access to the COMPANY database.
 
